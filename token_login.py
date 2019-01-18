@@ -39,3 +39,5 @@ def load(app):
         return {
             'success': True,
         }
+
+    app.register_blueprint(token_login)
