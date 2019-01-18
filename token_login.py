@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, abort, request, session
 from CTFd.utils.security.auth import login_user
-from CTFd.modles import db, Users
+from CTFd.models import db, Users
 from itsdangerous import URLSafeTimedSerializer
 
 def load(app):
