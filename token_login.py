@@ -6,7 +6,7 @@ from itsdangerous import URLSafeTimedSerializer
 def load(app):
     token_login_blueprint = Blueprint('token_login', __name__)
 
-    @token_login.route('/api/token-login', methods=['POST'])
+    @token_login_blueprint.route('/api/token-login', methods=['POST'])
     def token_login():
         secret = current_app.secret_key
         if not secret:
