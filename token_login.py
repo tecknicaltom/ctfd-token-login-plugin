@@ -4,7 +4,7 @@ from CTFd.models import db, Users
 from itsdangerous import URLSafeTimedSerializer
 
 def load(app):
-    token_login = Blueprint('token_login', __name__)
+    token_login_blueprint = Blueprint('token_login', __name__)
 
     @token_login.route('/api/token-login', methods=['POST'])
     def token_login():
@@ -40,4 +40,4 @@ def load(app):
             'success': True,
         }
 
-    app.register_blueprint(token_login)
+    app.register_blueprint(token_login_blueprint)
