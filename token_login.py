@@ -7,6 +7,12 @@ from itsdangerous import URLSafeTimedSerializer
 def load(app):
     token_login_blueprint = Blueprint('token_login', __name__)
 
+    # make sure logging handlers were installed, see #839
+    import logging
+    if not logging.getLogger('logins').handlers:
+        from CTFd.utils.logging import init_logs
+        init_logs(current_app)
+
     @token_login_blueprint.route('/api/token-login', methods=['POST'])
     def token_login():
         secret = current_app.secret_key
