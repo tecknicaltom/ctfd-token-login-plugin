@@ -1,5 +1,6 @@
 from flask import Blueprint, current_app, abort, request, session, jsonify
 from CTFd.models import db, Users
+from CTFd.plugins import bypass_csrf_protection
 from CTFd.utils.logging import log
 from CTFd.utils.security.auth import login_user
 from itsdangerous import URLSafeTimedSerializer
@@ -13,10 +14,7 @@ def load(app):
         from CTFd.utils.logging import init_logs
         init_logs(current_app)
 
-    @token_login_blueprint.route('/api/token-login-test', methods=['GET', 'POST'])
-    def token_login_test():
-        return 'TEST'
-
+    @bypass_csrf_protection
     @token_login_blueprint.route('/api/token-login', methods=['POST'])
     def token_login():
         secret = current_app.secret_key
