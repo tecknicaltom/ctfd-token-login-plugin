@@ -21,7 +21,7 @@ def load(app):
         if not secret:
            abort(500)
 
-        data = requst.form or request.get_json()
+        data = request.form or request.get_json()
         token = data.get('token', None)
         if not token:
             log('logins', "[{date}] {ip} Token not found ({keys})", keys=",".join(data.keys()))
