@@ -38,7 +38,7 @@ def load(app):
             log('logins', "[{date}] {ip} Bad Token Signature")
             abort(403)
 
-        user = Users.query.filter_by(name=tokenized_username)
+        user = Users.query.filter_by(name=tokenized_username).first()
         if not user:
             log('logins', "[{date}] {ip} Bad username")
             abort(403)
@@ -46,6 +46,7 @@ def load(app):
         session.regenerate()
 
         login_user(user)
+        log('logins', "[{date}] {ip} - {name} logged in via token")
         db.session.close()
         return jsonify(success=True)
 
