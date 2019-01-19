@@ -13,7 +13,7 @@ def load(app):
            abort(500)
 
         data = requst.form or request.get_json()
-        token = request.get('token', None)
+        token = data.get('token', None)
         if not token:
             abort(403)
 
