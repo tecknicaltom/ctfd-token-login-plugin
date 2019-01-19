@@ -3,7 +3,7 @@ from CTFd.models import db, Users
 from CTFd.plugins import bypass_csrf_protection
 from CTFd.utils.logging import log
 from CTFd.utils.security.auth import login_user
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 def load(app):
     token_login_blueprint = Blueprint('token_login', __name__)
