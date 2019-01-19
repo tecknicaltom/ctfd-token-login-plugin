@@ -13,6 +13,10 @@ def load(app):
         from CTFd.utils.logging import init_logs
         init_logs(current_app)
 
+    @token_login_blueprint.route('/api/token-login-test', methods=['GET', 'POST'])
+    def token_login_test():
+        return 'TEST'
+
     @token_login_blueprint.route('/api/token-login', methods=['POST'])
     def token_login():
         secret = current_app.secret_key
