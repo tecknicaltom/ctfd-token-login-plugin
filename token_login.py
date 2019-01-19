@@ -1,6 +1,7 @@
 from flask import Blueprint, current_app, abort, request, session, jsonify
-from CTFd.utils.security.auth import login_user
 from CTFd.models import db, Users
+from CTFd.utils.logging import log
+from CTFd.utils.security.auth import login_user
 from itsdangerous import URLSafeTimedSerializer
 
 def load(app):
@@ -15,32 +16,24 @@ def load(app):
         data = requst.form or request.get_json()
         token = data.get('token', None)
         if not token:
-            return jsonify(success=False, data={
-                'message': 'Token not found',
-                'keys': token.keys(),
-            }), 403
+            log('logins', "[{date}] {ip} Token not found ({keys})", keys=",".join(data.keys()))
+            abort(403)
 
         serializer = URLSafeTimedSerializer(secret)
 
         try:
             tokenized_username = serializer.loads(token, max_age=30)
         except SignatureExpired:
-            current_app.logger.debug('Token has expired')
-            return jsonify(success=False, data={
-                'message': 'Token expired',
-            }), 403
+            log('logins', "[{date}] {ip} Token has expired")
+            abort(403)
         except BadSignature:
-            current_app.logger.debug('Bad Token Signature')
-            return jsonify(success=False, data={
-                'message': 'Token not found',
-                'message': 'Bad signature',
-            }), 403
+            log('logins', "[{date}] {ip} Bad Token Signature")
+            abort(403)
 
         user = Users.query.filter_by(name=tokenized_username)
         if not user:
-            return jsonify(success=False, data={
-                'message': 'Bad username',
-            }), 403
+            log('logins', "[{date}] {ip} Bad username")
+            abort(403)
 
         session.regenerate()
 
