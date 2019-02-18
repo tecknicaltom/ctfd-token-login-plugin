@@ -7,9 +7,9 @@ import requests
 import tarfile
 import yaml
 
-secret = os.getenv('SECRET_KEY')
+secret = os.getenv('CTFD_SECRET_KEY')
 if not secret:
-    raise ValueError('Environment variable SECRET_KEY not found')
+    raise ValueError('Environment variable CTFD_SECRET_KEY not found')
 
 user = os.getenv('DEPLOYMENT_USER')
 if not user:
