@@ -38,35 +38,35 @@ if not match:
 nonce = match.group('nonce')
 print("extracted CSRF nonce: {}".format(nonce))
 
-for challenge_yaml in glob.glob('*/challenge.yaml'):
-    try:
-        print("Adding challenge yaml: {}".format(challenge_yaml))
-        additional_files = []
-        with open(challenge_yaml) as f:
-            challenge_data = yaml.load(f.read())
+challenge_yaml = 'challenge.yaml'
+try:
+    print("Adding challenge yaml: {}".format(challenge_yaml))
+    additional_files = []
+    with open(challenge_yaml) as f:
+        challenge_data = yaml.load(f.read())
 
-            base = os.path.dirname(challenge_yaml)
-            for filename in challenge_data.get('files', []):
-                full_filename = os.path.join(base, filename)
-                additional_files.append((full_filename, filename))
-            
-        with open('export.yaml', 'w') as f:
-            f.write(yaml.dump_all([challenge_data]))
+        base = os.path.dirname(challenge_yaml)
+        for filename in challenge_data.get('files', []):
+            full_filename = os.path.join(base, filename)
+            additional_files.append((full_filename, filename))
 
-        with tarfile.open('export.tar.gz', "w:gz") as tar:
-            tar.add('export.yaml')
-            for name, arcname in additional_files:
-                tar.add(name, arcname=arcname)
+    with open('export.yaml', 'w') as f:
+        f.write(yaml.dump_all([challenge_data]))
 
-        files = {'file': (
-            'export.tar.gz',
-            open('export.tar.gz', 'rb'),
-            'application/x-gzip'
-            )
-        }
-        resp = s.post(scoreboard_url_root + '/admin/yaml', files=files, data={'nonce': nonce})
-        resp.raise_for_status()
-        print("Success")
-    except Exception as e:
-        print("Exception thrown:")
-        print(e)
+    with tarfile.open('export.tar.gz', "w:gz") as tar:
+        tar.add('export.yaml')
+        for name, arcname in additional_files:
+            tar.add(name, arcname=arcname)
+
+    files = {'file': (
+        'export.tar.gz',
+        open('export.tar.gz', 'rb'),
+        'application/x-gzip'
+        )
+    }
+    resp = s.post(scoreboard_url_root + '/admin/yaml', files=files, data={'nonce': nonce})
+    resp.raise_for_status()
+    print("Success")
+except Exception as e:
+    print("Exception thrown:")
+    print(e)
