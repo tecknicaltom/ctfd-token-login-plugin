@@ -6,6 +6,12 @@ import re
 import requests
 import tarfile
 import yaml
+import optparse
+
+
+parser = optparse.OptionParser(usage="Usage: %prog [options]")
+parser.add_option('-d', dest='append_desciption')
+(options, args) = parser.parse_args()
 
 secret = os.getenv('CTFD_SECRET_KEY')
 if not secret:
@@ -18,6 +24,7 @@ if not user:
 ctfd_domain = os.getenv('CTFD_DOMAIN')
 if not ctfd_domain:
     raise ValueError('Environment variable CTFD_DOMAIN not found')
+
 
 scoreboard_url_root = ctfd_domain
 if not scoreboard_url_root.startswith('http'):
@@ -44,6 +51,9 @@ try:
     additional_files = []
     with open(challenge_yaml) as f:
         challenge_data = yaml.load(f.read())
+
+        if options.append_desciption:
+            challenge_data['description'] = "{}\n\n{}".format(challenge_data['description'].strip(), options.append_desciption)
 
         base = os.path.dirname(challenge_yaml)
         for filename in challenge_data.get('files', []):
